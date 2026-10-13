@@ -1,20 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=VT323&display=swap');
 
+@property --puzzle-glow-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 :root {
   font-family: 'Share Tech Mono', 'Courier New', monospace;
-  color: #d8d5b8;
-  background: #171a17;
+  color: #e0e3eb;
+  background: #14161c;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --bg: #171a17;
-  --panel: #20251f;
-  --panel-light: #292e25;
-  --ink: #d8d5b8;
-  --muted: #929581;
-  --green: #a5b86b;
-  --amber: #e6b85c;
-  --line: #414638;
+  --bg: #14161c;
+  --panel: #1c2029;
+  --panel-light: #242a36;
+  --ink: #e0e3eb;
+  --muted: #969eaf;
+  --green: #8bd49b;
+  --amber: #f2cb67;
+  --line: #394150;
   --pixel: 'Press Start 2P', monospace;
   --terminal: 'Share Tech Mono', 'Courier New', monospace;
   --screen: 'VT323', 'Courier New', monospace;
@@ -35,7 +41,7 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(111, 125, 73, 0.1), transparent 55%),
+    radial-gradient(ellipse at 50% 0%, rgba(99, 122, 186, 0.13), transparent 55%),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0, rgba(255, 255, 255, 0.012) 1px, transparent 1px, transparent 4px),
     var(--bg);
 }
@@ -105,9 +111,9 @@ p {
 
 .status-card {
   padding: 18px 18px 16px;
-  border: 2px solid #687250;
+  border: 1px solid #53617d;
   background: var(--panel);
-  box-shadow: 5px 5px 0 #0d0f0d;
+  box-shadow: inset 0 1px 0 rgba(224, 227, 235, 0.06);
 }
 
 .status-card-main {
@@ -123,7 +129,7 @@ p {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #a2a58e;
+  color: #aab2c3;
   font-size: 8px;
 }
 
@@ -133,7 +139,7 @@ p {
   font-family: var(--pixel);
   font-size: 14px;
   line-height: 1.7;
-  text-shadow: 2px 2px 0 #10120e;
+  text-shadow: 0 2px 12px rgba(242, 203, 103, 0.14);
 }
 
 .status-rule {
@@ -162,13 +168,13 @@ p {
 }
 
 .reward-amount span {
-  color: #babaa2;
+  color: #bdc5d4;
   font-size: 7px;
 }
 
 .status-note {
   margin: 0;
-  color: #969887;
+  color: #a1a9b9;
   font-family: var(--terminal);
   font-size: 11px;
   line-height: 1.5;
@@ -206,7 +212,7 @@ h2 {
 
 .puzzle-intro {
   margin: 5px 0 0;
-  color: #aaa995;
+  color: #a9afbf;
   font-family: var(--terminal);
   font-size: 12px;
 }
@@ -218,8 +224,8 @@ h2 {
   flex: 0 0 auto;
   padding: 8px 9px;
   border: 1px solid var(--line);
-  background: #21251f;
-  color: #a9ab98;
+  background: #202530;
+  color: #b4bdcf;
   cursor: pointer;
   font-family: var(--pixel);
   font-size: 7px;
@@ -243,37 +249,102 @@ h2 {
 }
 
 .puzzle-card {
-  padding: 18px 19px 15px;
-  border: 2px solid var(--line);
-  background: #1d211c;
-  box-shadow: 5px 5px 0 #0c0e0c;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 23px 25px;
+  border: 1px solid #4a566b;
+  border-radius: 12px;
+  background:
+    linear-gradient(145deg, #202530, #1a1e26 68%, #191c23);
+  box-shadow:
+    inset 0 1px 0 rgba(224, 227, 235, 0.06),
+    inset 0 0 32px rgba(8, 11, 17, 0.22);
+}
+
+.puzzle-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 22px;
+  border: 1px solid rgba(119, 210, 223, 0.12);
+  border-radius: 7px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.012) 0,
+      rgba(255, 255, 255, 0.012) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    radial-gradient(ellipse at 50% 40%, #1b2028 0%, #15181f 78%);
+  box-shadow:
+    inset 0 0 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(224, 227, 235, 0.025);
+}
+
+.puzzle-card::before {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  content: '';
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--puzzle-glow-angle),
+    transparent 0deg 292deg,
+    rgba(119, 210, 223, 0.04) 316deg,
+    rgba(119, 210, 223, 0.3) 338deg,
+    rgba(119, 210, 223, 0.04) 354deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: puzzle-glow-travel 14s linear infinite;
+}
+
+@keyframes puzzle-glow-travel {
+  to {
+    --puzzle-glow-angle: 1turn;
+  }
 }
 
 .number-sequence {
-  margin: 0 0 14px;
-  color: #d1d0b8;
+  margin: 0 0 20px;
+  color: #dce1eb;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   letter-spacing: 0.08em;
   line-height: 1.5;
-  text-align: center;
+  text-align: left;
 }
 
 .clue-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .clue-list li {
-  margin: 6px 0;
+  margin: 2px 0;
 }
 
 .clue-text {
-  color: #d1d0b8;
+  color: #dce1eb;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.65;
 }
 
@@ -281,9 +352,17 @@ h2 {
   padding-top: 2px;
 }
 
+.puzzle-main {
+  display: flex;
+}
+
+.puzzle-card {
+  flex: 1;
+}
+
 .sidebar-block {
   padding: 0 0 22px;
-  border-bottom: 2px dashed #393e32;
+  border-bottom: 2px dashed #363e4b;
 }
 
 .sidebar-title {
@@ -297,7 +376,7 @@ h2 {
   height: 22px;
   display: grid;
   place-items: center;
-  border: 1px solid #78835a;
+  border: 1px solid #64779d;
   color: var(--amber);
   font-family: var(--pixel);
   font-size: 10px;
@@ -324,7 +403,7 @@ h3 {
 
 .hint-quote {
   margin-bottom: 9px;
-  color: #d5d1b8;
+  color: #dce1eb;
   font-family: var(--screen);
   font-size: 23px;
   line-height: 1.05;
@@ -332,24 +411,34 @@ h3 {
 
 .hint-caption {
   margin-bottom: 0;
-  color: #929581;
+  color: #969eaf;
   font-family: var(--pixel);
   font-size: 6px;
   line-height: 2;
 }
 
 .details-block {
-  padding-top: 20px;
+  padding-top: 0;
+}
+
+.hint-block {
+  border-bottom: 0;
 }
 
 .details-block > .eyebrow {
   margin-bottom: 10px;
-  color: #929581;
+  color: #969eaf;
   font-size: 7px;
 }
 
 .details-block h3 {
-  margin-bottom: 10px;
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  margin: 0 0 10px;
+  padding: 8px 0;
+  border-block: 1px dashed #394150;
+  color: var(--amber);
 }
 
 .details-list {
@@ -361,17 +450,21 @@ h3 {
   justify-content: space-between;
   gap: 10px;
   padding: 9px 0;
-  border-top: 1px dashed #404538;
+  border-top: 1px dashed #394150;
   font-size: 10px;
 }
 
+.details-list div:first-child {
+  border-top: 0;
+}
+
 .details-list dt {
-  color: #929581;
+  color: #969eaf;
 }
 
 .details-list dd {
   margin: 0;
-  color: #d1d0b8;
+  color: #dce1eb;
   text-align: right;
 }
 
@@ -379,14 +472,14 @@ h3 {
   position: relative;
   margin-top: 19px;
   padding: 16px;
-  border: 2px solid #687250;
-  background: #252b20;
-  box-shadow: 4px 4px 0 #0c0e0c;
+  border: 1px solid #53617d;
+  background: #222834;
+  box-shadow: inset 0 1px 0 rgba(224, 227, 235, 0.06);
 }
 
 .submit-card .eyebrow {
   margin-bottom: 10px;
-  color: var(--green);
+  color: #e0e3eb;
   font-size: 7px;
 }
 
@@ -399,7 +492,7 @@ h3 {
 .submit-card > p:last-of-type {
   max-width: 185px;
   margin-bottom: 0;
-  color: #a4a691;
+  color: #b5bdce;
   font-family: var(--screen);
   font-size: 18px;
   line-height: 1.1;
@@ -424,7 +517,7 @@ h3 {
   align-items: center;
   gap: 12px;
   padding: 0 7%;
-  border-top: 2px dashed #393e32;
+  border-top: 2px dashed #363e4b;
 }
 
 .closing-star {
@@ -434,19 +527,19 @@ h3 {
 
 .closing-note p {
   margin: 0;
-  color: var(--green);
+  color: #e0e3eb;
   font-family: var(--pixel);
   font-size: 8px;
   line-height: 1.9;
 }
 
 .closing-note p span {
-  color: #929581;
+  color: #747d8e;
 }
 
 .closing-note > a {
   margin-left: auto;
-  color: #929581;
+  color: #969eaf;
   font-size: 7px;
 }
 
@@ -459,8 +552,8 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #34392f;
-  color: #747a67;
+  border-top: 1px solid #303744;
+  color: #80899b;
   font-size: 6px;
   line-height: 1.8;
 }
@@ -549,7 +642,11 @@ h3 {
   }
 
   .puzzle-card {
-    padding: 15px 13px 13px;
+    padding: 18px 15px;
+  }
+
+  .puzzle-screen {
+    padding: 16px 13px;
   }
 
   .puzzle-sidebar {
@@ -623,5 +720,9 @@ h3 {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .puzzle-card::before {
+    animation: none;
   }
 }
