@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import AmbientParticles from "./components/AmbientParticles.vue";
 
 const copied = ref(false);
 const copyError = ref(false);
@@ -34,6 +35,7 @@ async function copyLink() {
 </script>
 
 <template>
+	<AmbientParticles />
 	<div class="page-shell">
 		<main>
 			<section
