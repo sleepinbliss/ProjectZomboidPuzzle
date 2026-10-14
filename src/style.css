@@ -46,6 +46,12 @@ body {
     var(--bg);
 }
 
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 body::after {
   position: fixed;
   z-index: 3;
@@ -75,7 +81,7 @@ a:focus-visible {
 
 .page-shell {
   width: min(100% - 72px, 1040px);
-  margin: 0 auto;
+  margin: auto;
 }
 
 .eyebrow,
