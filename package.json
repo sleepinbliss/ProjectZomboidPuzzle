@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lucide/vue": "^1.57.0",
+    "@supabase/server": "^1.9.2",
     "vue": "^3.5.42"
   },
   "devDependencies": {
