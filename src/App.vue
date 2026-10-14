@@ -61,12 +61,14 @@ async function copyLink() {
 				<div class="puzzle-main">
 					<div class="puzzle-card">
 						<div class="puzzle-screen">
-							<p class="number-sequence">T W O F O U R S I X</p>
-							<ul class="clue-list">
-								<li v-for="clue in clues" :key="clue">
-									<span class="clue-text">{{ clue }}</span>
-								</li>
-							</ul>
+							<div class="screen-content">
+								<p class="number-sequence">T W O F O U R S I X</p>
+								<ul class="clue-list">
+									<li v-for="clue in clues" :key="clue">
+										<span class="clue-text">{{ clue }}</span>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</div>
 				</div>
