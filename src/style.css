@@ -139,6 +139,23 @@ a:focus-visible {
   flex: 0 0 9px;
   background: #db7950;
   box-shadow: 0 0 9px rgba(219, 121, 80, 0.45);
+  animation: status-indicator-blink 10s infinite;
+}
+
+@keyframes status-indicator-blink {
+  0%,
+  94%,
+  97%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 9px rgba(219, 121, 80, 0.45);
+  }
+
+  95%,
+  96% {
+    opacity: 0.3;
+    box-shadow: 0 0 2px rgba(219, 121, 80, 0.2);
+  }
 }
 
 h1,
@@ -804,7 +821,8 @@ h3 {
 
   body::before,
   .page-shell::before,
-  .puzzle-card::before {
+  .puzzle-card::before,
+  .status-indicator {
     animation: none;
   }
 }
