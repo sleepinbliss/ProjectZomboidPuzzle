@@ -28,15 +28,22 @@ function resizeCanvas() {
   context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
 
   const count = Math.min(130, Math.max(40, Math.round((width * height) / 9000)))
-  particles = Array.from({ length: count }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    vx: (Math.random() - 0.5) * 0.2,
-    vy: (Math.random() - 0.5) * 0.2,
-    radius: 0.7 + Math.random() * 1.3,
-    alpha: 0.18 + Math.random() * 0.28,
-    tint: Math.random() > 0.8 ? '242, 203, 103' : '119, 210, 223',
-  }))
+  particles = Array.from({ length: count }, () => {
+    const angle = Math.random() * Math.PI * 2
+    const driftSpeed = 0.008 + Math.random() * 0.017
+
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - 0.5) * 0.08,
+      vy: (Math.random() - 0.5) * 0.08,
+      driftX: Math.cos(angle) * driftSpeed,
+      driftY: Math.sin(angle) * driftSpeed,
+      radius: 0.7 + Math.random() * 1.3,
+      alpha: 0.18 + Math.random() * 0.28,
+      tint: Math.random() > 0.8 ? '174, 192, 139' : '145, 153, 143',
+    }
+  })
 
   if (reducedMotion?.matches) drawParticles(false)
 }
@@ -57,8 +64,8 @@ function drawParticles(animate = true) {
       particle.vy += pointerDeltaY * influence * 0.012
       particle.vx *= 0.992
       particle.vy *= 0.992
-      particle.x += particle.vx
-      particle.y += particle.vy
+      particle.x += particle.vx + particle.driftX
+      particle.y += particle.vy + particle.driftY
 
       if (particle.x < 0) particle.x = width
       if (particle.x > width) particle.x = 0

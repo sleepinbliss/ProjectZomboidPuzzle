@@ -10,6 +10,14 @@ const elapsedDays = computed(() =>
 	Math.max(0, Math.floor((currentTime.value - puzzleStartedAt) / 86400000)),
 );
 let dayCountInterval;
+const footerLabels = [
+	'PROJECT ZOMBOID // COMMUNITY PUZZLE',
+	'100K SCRAP BOUNTY ACTIVE',
+];
+const typedFooterCharacters = ref(footerLabels.map(() => 0));
+const isFooterBlinking = ref(false);
+let footerAnimationTimers = [];
+let footerMotionPreference;
 
 onMounted(() => {
 	currentTime.value = Date.now();
@@ -20,6 +28,103 @@ onMounted(() => {
 
 onUnmounted(() => {
 	window.clearInterval(dayCountInterval);
+});
+
+function scheduleFooterAnimation(callback, delay) {
+	const timer = window.setTimeout(() => {
+		footerAnimationTimers = footerAnimationTimers.filter(
+			(activeTimer) => activeTimer !== timer,
+		);
+		callback();
+	}, delay);
+	footerAnimationTimers.push(timer);
+}
+
+function clearFooterAnimationTimers() {
+	footerAnimationTimers.forEach((timer) => window.clearTimeout(timer));
+	footerAnimationTimers = [];
+}
+
+function typeFooterLabel(index, onComplete) {
+	const typeNextCharacter = () => {
+		if (typedFooterCharacters.value[index] === footerLabels[index].length) {
+			onComplete();
+			return;
+		}
+
+		scheduleFooterAnimation(
+			() => {
+				typedFooterCharacters.value[index] += 1;
+				typeNextCharacter();
+			},
+			45 + Math.random() * 105,
+		);
+	};
+
+	typeNextCharacter();
+}
+
+function scheduleFooterBlink(holdEndsAt) {
+	const remainingHold = holdEndsAt - Date.now();
+	if (remainingHold <= 1000) return;
+
+	const delay = Math.min(4000 + Math.random() * 8000, remainingHold - 1000);
+	scheduleFooterAnimation(() => {
+		isFooterBlinking.value = true;
+		scheduleFooterAnimation(() => {
+			isFooterBlinking.value = false;
+			scheduleFooterBlink(holdEndsAt);
+		}, 600);
+	}, delay);
+}
+
+function startFooterAnimationCycle() {
+	if (footerMotionPreference.matches) {
+		typedFooterCharacters.value = footerLabels.map((label) => label.length);
+		return;
+	}
+
+	typedFooterCharacters.value = footerLabels.map(() => 0);
+	let completedLabels = 0;
+	const onLabelComplete = () => {
+		completedLabels += 1;
+		if (completedLabels !== footerLabels.length) return;
+
+		const holdEndsAt = Date.now() + 60000;
+		scheduleFooterAnimation(startFooterAnimationCycle, 60000);
+		scheduleFooterBlink(holdEndsAt);
+	};
+
+	footerLabels.forEach((_, index) => typeFooterLabel(index, onLabelComplete));
+}
+
+function handleFooterMotionPreferenceChange() {
+	clearFooterAnimationTimers();
+	isFooterBlinking.value = false;
+	if (footerMotionPreference.matches) {
+		typedFooterCharacters.value = footerLabels.map((label) => label.length);
+	} else {
+		startFooterAnimationCycle();
+	}
+}
+
+onMounted(() => {
+	footerMotionPreference = window.matchMedia(
+		'(prefers-reduced-motion: reduce)',
+	);
+	footerMotionPreference.addEventListener(
+		'change',
+		handleFooterMotionPreferenceChange,
+	);
+	startFooterAnimationCycle();
+});
+
+onUnmounted(() => {
+	clearFooterAnimationTimers();
+	footerMotionPreference?.removeEventListener(
+		'change',
+		handleFooterMotionPreferenceChange,
+	);
 });
 
 const copied = ref(false);
@@ -316,9 +421,19 @@ async function copyLink() {
 			</section>
 		</main>
 
-		<footer class="site-footer">
-			<span>PROJECT ZOMBOID // COMMUNITY PUZZLE</span>
-			<span>100K SCRAP BOUNTY ACTIVE</span>
+		<footer
+			class="site-footer"
+			:class="{ 'footer-blinking': isFooterBlinking }"
+		>
+			<span
+				v-for="(label, index) in footerLabels"
+				:key="label"
+				class="footer-text"
+				:style="{
+					'--typed-characters': typedFooterCharacters[index],
+				}"
+				>{{ label }}</span
+			>
 		</footer>
 	</div>
 </template>
