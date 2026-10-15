@@ -65,6 +65,7 @@ const currentHint = ref(0);
 const hints = [
 	"You won't guess the word, it will be obvious when it's found.",
 	'The word is not on this page, and not in a book. But locked in a crate somewhere in the woods.',
+	'TEN',
 ];
 
 function changeHint(direction) {
@@ -180,10 +181,15 @@ async function copyLink() {
 								class="hint-quote"
 								:class="{
 									'hint-active': index === currentHint,
+									'hint-vertical': index === 2,
 								}"
 								:aria-hidden="index !== currentHint"
 							>
-								“{{ hint }}”
+								“{{
+									index === 2 ?
+										hint.split('').join('\n')
+									:	hint
+								}}”
 							</p>
 						</div>
 						<div class="hint-controls">
