@@ -185,11 +185,11 @@ async function copyLink() {
 								}"
 								:aria-hidden="index !== currentHint"
 							>
-								“{{
+								{{
 									index === 2 ?
 										hint.split('').join('\n')
 									:	hint
-								}}”
+								}}
 							</p>
 						</div>
 						<div class="hint-controls">
