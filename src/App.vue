@@ -1,8 +1,11 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { ChevronLeft, ChevronRight, Send } from "@lucide/vue";
 import AmbientParticles from "./components/AmbientParticles.vue";
-import { saveSubmission } from "./submissions.js";
+import {
+	getSubmissionAttemptCount,
+	saveSubmission,
+} from "./submissions.js";
 
 const puzzleStartedAt = Date.parse("2026-10-12T21:02:00-06:00");
 const currentTime = ref(Date.now());
@@ -133,6 +136,35 @@ const answer = ref("");
 const answerResult = ref("");
 const isSubmitting = ref(false);
 const submissionError = ref("");
+const submissionAttemptCount = ref(null);
+const cooldownTimer = computed(() => {
+	const millisecondsToReset =
+		3600000 - (currentTime.value % 3600000);
+	const secondsToReset = Math.ceil(millisecondsToReset / 1000);
+	const minutes = Math.floor(secondsToReset / 60);
+	const seconds = secondsToReset % 60;
+	return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+});
+
+watch(
+	() => Math.floor(currentTime.value / 3600000),
+	() => {
+		void refreshSubmissionAttemptCount();
+	},
+);
+
+async function refreshSubmissionAttemptCount() {
+	try {
+		submissionAttemptCount.value = await getSubmissionAttemptCount();
+	} catch {
+		submissionAttemptCount.value = null;
+	}
+}
+
+onMounted(() => {
+	void refreshSubmissionAttemptCount();
+});
+
 const answerFeedback = computed(() => {
 	if (isSubmitting.value) return "Submitting...";
 	if (submissionError.value) return submissionError.value;
@@ -154,13 +186,30 @@ async function submitAnswer() {
 	answerResult.value = "";
 	try {
 		await saveSubmission(submittedAnswer);
+		if (submissionAttemptCount.value !== null) {
+			submissionAttemptCount.value = Math.min(
+				20,
+				submissionAttemptCount.value + 1,
+			);
+		}
+		void refreshSubmissionAttemptCount();
 		answerResult.value =
 			submittedAnswer.toLowerCase() === "ucheated" ? "correct" : "wrong";
 		if (answerResult.value === "correct") {
 			window.alert("this is not the correct answer. Try again.");
 		}
-	} catch {
-		submissionError.value = "Could not save your answer. Please try again.";
+	} catch (error) {
+		const hourlyLimitReached =
+			error instanceof Error &&
+			error.message.startsWith("Hourly limit reached");
+		if (hourlyLimitReached) {
+			submissionAttemptCount.value = 20;
+			void refreshSubmissionAttemptCount();
+		}
+		submissionError.value =
+			hourlyLimitReached
+				? error.message
+				: "Could not save your answer. Please try again.";
 	} finally {
 		isSubmitting.value = false;
 	}
@@ -369,6 +418,14 @@ async function copyLink() {
 								>
 									<Send :size="18" aria-hidden="true" />
 								</button>
+							</div>
+							<div class="answer-attempts" aria-live="polite">
+								<span>{{ submissionAttemptCount ?? "--" }}/20</span>
+								<span
+									class="answer-attempts-cooldown"
+									:title="`Attempts reset in ${cooldownTimer}`"
+									>RESET {{ cooldownTimer }}</span
+								>
 							</div>
 							<p id="answer-feedback" class="answer-feedback" role="status">
 								{{ answerFeedback }}

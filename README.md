@@ -6,12 +6,15 @@ Valid eight-letter answers are saved to Supabase before the existing local answe
 feedback is shown. Only the submitted answer and a database-generated timestamp
 are stored. Invalid entries are not saved. A failed save shows an error and can
 be retried; the form prevents concurrent submissions while a request is pending.
+The form also displays the number of attempts used from the hourly IP-based limit.
 
 ### Set Up Supabase
 
 1. Create a project at https://supabase.com/dashboard.
-2. Open the project's SQL Editor and run [supabase/schema.sql](supabase/schema.sql)
-   once. It creates the `submissions` table and enables row-level security.
+2. Open the project's SQL Editor and run [supabase/schema.sql](supabase/schema.sql).
+   It creates the `submissions` table and enables row-level security. Run the
+   script again after pulling updates to apply schema changes to an existing
+   project.
 3. Find the project URL and **publishable** API key in the project's Connect
    dialog or Settings / API Keys. Never use a secret or `service_role` key.
 4. Create `.env.local` in the project root using [.env.example](.env.example) as
@@ -32,19 +35,21 @@ add these repository variables:
 Run the Pages deployment workflow again after setting or changing them. Vite
 embeds these public settings in the built site; they are not admin credentials.
 
-### Access And Limitations
+### Access And Rate Limiting
 
 Anonymous visitors can insert only the `answer` column. They cannot select,
 update, or delete submissions, and cannot supply the database timestamp. View
 submissions through your authenticated Supabase dashboard. Do not add public
 read policies or place privileged database keys in frontend code.
 
-This direct insert endpoint is public and does not provide per-visitor rate
-limiting or bot protection. Before exposing it to heavy traffic, route inserts
-through a backend or Edge Function with server-side rate limiting and CAPTCHA
-verification. A malicious visitor can bypass client-side controls. Network
-failures can also make a retry create a duplicate if the first insert reached
-the server before its response was lost.
+The database permits at most 20 attempts per IP address in each UTC clock hour.
+The limit is enforced on inserts, including direct API requests, and the
+rate-limit records are not accessible to anonymous visitors. Supabase request
+headers must include a client address in `cf-connecting-ip`, `x-real-ip`, or
+`x-forwarded-for`; inserts without a usable address are rejected. This rate
+limit is not CAPTCHA or broader bot protection. Network failures can also make
+a retry create a duplicate if the first insert reached the server before its
+response was lost.
 
 Answer checking remains in the browser, including the existing case-insensitive
 match and alert. This integration does not hide the answer or change the puzzle's
