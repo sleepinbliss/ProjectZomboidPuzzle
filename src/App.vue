@@ -1,18 +1,18 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { ChevronLeft, ChevronRight, Send } from '@lucide/vue';
-import AmbientParticles from './components/AmbientParticles.vue';
-import { saveSubmission } from './submissions.js';
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { ChevronLeft, ChevronRight, Send } from "@lucide/vue";
+import AmbientParticles from "./components/AmbientParticles.vue";
+import { saveSubmission } from "./submissions.js";
 
-const puzzleStartedAt = Date.parse('2026-10-12T21:02:00-06:00');
+const puzzleStartedAt = Date.parse("2026-10-12T21:02:00-06:00");
 const currentTime = ref(Date.now());
 const elapsedDays = computed(() =>
 	Math.max(0, Math.floor((currentTime.value - puzzleStartedAt) / 86400000)),
 );
 let dayCountInterval;
 const footerLabels = [
-	'PROJECT ZOMBOID // COMMUNITY PUZZLE',
-	'100K SCRAP BOUNTY ACTIVE',
+	"PROJECT ZOMBOID // COMMUNITY PUZZLE",
+	"100K SCRAP BOUNTY ACTIVE",
 ];
 const typedFooterCharacters = ref(footerLabels.map(() => 0));
 const isFooterBlinking = ref(false);
@@ -110,10 +110,10 @@ function handleFooterMotionPreferenceChange() {
 
 onMounted(() => {
 	footerMotionPreference = window.matchMedia(
-		'(prefers-reduced-motion: reduce)',
+		"(prefers-reduced-motion: reduce)",
 	);
 	footerMotionPreference.addEventListener(
-		'change',
+		"change",
 		handleFooterMotionPreferenceChange,
 	);
 	startFooterAnimationCycle();
@@ -122,45 +122,45 @@ onMounted(() => {
 onUnmounted(() => {
 	clearFooterAnimationTimers();
 	footerMotionPreference?.removeEventListener(
-		'change',
+		"change",
 		handleFooterMotionPreferenceChange,
 	);
 });
 
 const copied = ref(false);
 const copyError = ref(false);
-const answer = ref('');
-const answerResult = ref('');
+const answer = ref("");
+const answerResult = ref("");
 const isSubmitting = ref(false);
-const submissionError = ref('');
+const submissionError = ref("");
 const answerFeedback = computed(() => {
-	if (isSubmitting.value) return 'Submitting...';
+	if (isSubmitting.value) return "Submitting...";
 	if (submissionError.value) return submissionError.value;
-	if (answerResult.value === 'invalid') return 'Enter exactly 8 letters.';
-	if (answerResult.value === 'wrong') return 'Incorrect answer.';
-	if (answerResult.value === 'correct') return 'Correct answer!';
-	return '';
+	if (answerResult.value === "invalid") return "Enter exactly 8 letters.";
+	if (answerResult.value === "wrong") return "Incorrect answer.";
+	if (answerResult.value === "correct") return "Correct answer!";
+	return "";
 });
 
 async function submitAnswer() {
 	if (isSubmitting.value) return;
-	submissionError.value = '';
+	submissionError.value = "";
 	const submittedAnswer = answer.value;
 	if (!/^[A-Za-z]{8}$/.test(submittedAnswer)) {
-		answerResult.value = 'invalid';
+		answerResult.value = "invalid";
 		return;
 	}
 	isSubmitting.value = true;
-	answerResult.value = '';
+	answerResult.value = "";
 	try {
 		await saveSubmission(submittedAnswer);
 		answerResult.value =
-			submittedAnswer.toLowerCase() === 'ucheated' ? 'correct' : 'wrong';
-		if (answerResult.value === 'correct') {
-			window.alert('this is not the correct answer. Try again.');
+			submittedAnswer.toLowerCase() === "ucheated" ? "correct" : "wrong";
+		if (answerResult.value === "correct") {
+			window.alert("this is not the correct answer. Try again.");
 		}
 	} catch {
-		submissionError.value = 'Could not save your answer. Please try again.';
+		submissionError.value = "Could not save your answer. Please try again.";
 	} finally {
 		isSubmitting.value = false;
 	}
@@ -169,8 +169,8 @@ async function submitAnswer() {
 const currentHint = ref(0);
 const hints = [
 	"You won't guess the word, it will be obvious when it's found.",
-	'The word is not on this page, and not in a book. But locked in a crate somewhere in the woods.',
-	'TEN',
+	"The word is not on this page, and not in a book. But locked in a crate somewhere in the woods.",
+	"TEN",
 ];
 
 function changeHint(direction) {
@@ -179,7 +179,7 @@ function changeHint(direction) {
 }
 
 const clues = [
-	'llonK leunamE yb ,”tserevE nwoD gnillaF“',
+	"llonK leunamE yb ,”tserevE nwoD gnillaF“",
 	'siloS ybloC yb ,"yrutneC htneeteniN eht fo trA"',
 	'ynneD eirraK yb ,"egdirbseroG"',
 	'ssaH ttaM egduJ yb ,"thgiR tsriF ,tnemdnemA dnoceS"',
@@ -216,15 +216,9 @@ async function copyLink() {
 				class="puzzle-layout"
 				aria-labelledby="puzzle-heading"
 			>
-				<aside
-					class="status-card status-card-main"
-					aria-label="Puzzle status"
-				>
+				<aside class="status-card status-card-main" aria-label="Puzzle status">
 					<div class="status-top">
-						<span
-							class="status-indicator"
-							aria-hidden="true"
-						></span>
+						<span class="status-indicator" aria-hidden="true"></span>
 						<span>STATUS</span>
 					</div>
 					<p class="status-value">
@@ -234,19 +228,17 @@ async function copyLink() {
 							title="Started October 12, 2026 at 9:02 PM CST (UTC-6)"
 						>
 							{{ elapsedDays }}
-							{{ elapsedDays === 1 ? 'DAY' : 'DAYS' }} RUNNING
+							{{ elapsedDays === 1 ? "DAY" : "DAYS" }} RUNNING
 						</span>
 					</p>
 					<div class="status-rule"></div>
 					<div class="reward">
 						<span class="reward-label">BOUNTY</span>
-						<span class="reward-amount"
-							>100K <span>SCRAP</span></span
-						>
+						<span class="reward-amount">100K <span>SCRAP</span></span>
 					</div>
 					<p class="status-note">
-						GIVING AWAY 100k SCRAP TOO WHOEVER SOLVES THIS PUZZLE.
-						LASTS UNTIL THE CORRECT ANSWER IS TURNED IN.
+						GIVING AWAY 100k SCRAP TOO WHOEVER SOLVES THIS PUZZLE. LASTS UNTIL
+						THE CORRECT ANSWER IS TURNED IN.
 					</p>
 				</aside>
 
@@ -254,14 +246,10 @@ async function copyLink() {
 					<div class="puzzle-card">
 						<div class="puzzle-screen">
 							<div class="screen-content">
-								<p class="number-sequence">
-									T W O F O U R S I X
-								</p>
+								<p class="number-sequence">T W O F O U R S I X</p>
 								<ul class="clue-list">
 									<li v-for="clue in clues" :key="clue">
-										<span class="clue-text">{{
-											clue
-										}}</span>
+										<span class="clue-text">{{ clue }}</span>
 									</li>
 								</ul>
 							</div>
@@ -275,11 +263,7 @@ async function copyLink() {
 						aria-labelledby="hint-heading"
 					>
 						<h3 id="hint-heading">HINT</h3>
-						<div
-							class="hint-slides"
-							aria-live="polite"
-							aria-atomic="true"
-						>
+						<div class="hint-slides" aria-live="polite" aria-atomic="true">
 							<p
 								v-for="(hint, index) in hints"
 								:key="hint"
@@ -290,11 +274,7 @@ async function copyLink() {
 								}"
 								:aria-hidden="index !== currentHint"
 							>
-								{{
-									index === 2 ?
-										hint.split('').join('\n')
-									:	hint
-								}}
+								{{ index === 2 ? hint.split("").join("\n") : hint }}
 							</p>
 						</div>
 						<div class="hint-controls">
@@ -308,8 +288,7 @@ async function copyLink() {
 								<ChevronLeft :size="20" aria-hidden="true" />
 							</button>
 							<span class="hint-counter"
-								>{{ currentHint + 1 }} /
-								{{ hints.length }}</span
+								>{{ currentHint + 1 }} / {{ hints.length }}</span
 							>
 							<button
 								type="button"
@@ -331,24 +310,18 @@ async function copyLink() {
 						<dl class="details-list">
 							<div><dt>THE ANSWER IS AN 8-LETTER WORD.</dt></div>
 							<div>
-								<dt>
-									THE WORD IS NOT RELATED TO PZ BUT THE PUZZLE
-									IS.
-								</dt>
+								<dt>THE WORD IS NOT RELATED TO PZ BUT THE PUZZLE IS.</dt>
 							</div>
 							<div>
 								<dt>
-									(YOU DO NOT NEED TO BE AN EXPERIENCED
-									ZOMBOID PLAYER TO FIND THE ANSWER).
+									(YOU DO NOT NEED TO BE AN EXPERIENCED ZOMBOID PLAYER TO FIND
+									THE ANSWER).
 								</dt>
 							</div>
 						</dl>
 					</section>
 
-					<section
-						class="submit-card"
-						aria-labelledby="submit-heading"
-					>
+					<section class="submit-card" aria-labelledby="submit-heading">
 						<p class="eyebrow">ANSWER FOUND?</p>
 						<h3 id="submit-heading">SUBMIT ANSWER</h3>
 						<form
@@ -364,17 +337,14 @@ async function copyLink() {
 									class="answer-input"
 									:class="{
 										'answer-wrong':
-											answerResult === 'wrong' ||
-											answerResult === 'invalid',
-										'answer-correct':
-											answerResult === 'correct',
+											answerResult === 'wrong' || answerResult === 'invalid',
+										'answer-correct': answerResult === 'correct',
 									}"
 									type="text"
 									aria-label="8-letter answer"
 									aria-describedby="answer-feedback"
 									:aria-invalid="
-										answerResult === 'wrong' ||
-										answerResult === 'invalid'
+										answerResult === 'wrong' || answerResult === 'invalid'
 									"
 									placeholder="Your answer"
 									minlength="8"
@@ -400,17 +370,11 @@ async function copyLink() {
 									<Send :size="18" aria-hidden="true" />
 								</button>
 							</div>
-							<p
-								id="answer-feedback"
-								class="answer-feedback"
-								role="status"
-							>
+							<p id="answer-feedback" class="answer-feedback" role="status">
 								{{ answerFeedback }}
 							</p>
 						</form>
-						<p>
-							DM BLISS ON DISCORD THE CORRECT ANSWER WHEN FOUND.
-						</p>
+						<p>DM BLISS ON DISCORD THE CORRECT ANSWER WHEN FOUND.</p>
 					</section>
 				</aside>
 			</section>
