@@ -185,7 +185,7 @@ async function submitAnswer() {
 	isSubmitting.value = true;
 	answerResult.value = "";
 	try {
-		await saveSubmission(submittedAnswer);
+		const isCorrectAnswer = await saveSubmission(submittedAnswer);
 		if (submissionAttemptCount.value !== null) {
 			submissionAttemptCount.value = Math.min(
 				20,
@@ -193,9 +193,9 @@ async function submitAnswer() {
 			);
 		}
 		void refreshSubmissionAttemptCount();
-		answerResult.value =
-			submittedAnswer.toLowerCase() === "ucheated" ? "correct" : "wrong";
-		if (answerResult.value === "correct") {
+		const isEasterEgg = submittedAnswer.toLowerCase() === "ucheated";
+		answerResult.value = isCorrectAnswer || isEasterEgg ? "correct" : "wrong";
+		if (isEasterEgg) {
 			window.alert("this is not the correct answer. Try again.");
 		}
 	} catch (error) {

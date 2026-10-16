@@ -6,16 +6,9 @@ create table if not exists public.submissions (
 alter table public.submissions enable row level security;
 
 revoke all on table public.submissions from anon, authenticated;
-grant insert (answer) on public.submissions to anon;
 
 drop policy if exists "Visitors can submit eight-letter answers"
 on public.submissions;
-
-create policy "Visitors can submit eight-letter answers"
-on public.submissions
-for insert
-to anon
-with check (answer ~ '^[A-Za-z]{8}$');
 
 create table if not exists public.submission_rate_limits (
   ip_address inet not null,
@@ -140,3 +133,48 @@ $$;
 revoke all on function public.get_submission_attempt_count()
 from public, anon, authenticated;
 grant execute on function public.get_submission_attempt_count() to anon;
+
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+
+create table if not exists private.puzzle_answer (
+  id boolean primary key default true check (id),
+  answer text not null check (answer ~ '^[A-Za-z]{8}$')
+);
+
+alter table private.puzzle_answer enable row level security;
+revoke all on table private.puzzle_answer from public, anon, authenticated;
+
+create or replace function public.submit_puzzle_answer(p_answer text)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  expected_answer text;
+begin
+  if p_answer is null or p_answer !~ '^[A-Za-z]{8}$' then
+    raise exception 'Answer must be exactly eight letters'
+      using errcode = '22023';
+  end if;
+
+  select answer
+  into expected_answer
+  from private.puzzle_answer
+  where id = true;
+
+  if not found then
+    raise exception 'Puzzle answer is not configured'
+      using errcode = '55000';
+  end if;
+
+  insert into public.submissions (answer) values (p_answer);
+
+  return lower(p_answer) = lower(expected_answer);
+end;
+$$;
+
+revoke all on function public.submit_puzzle_answer(text)
+from public, anon, authenticated;
+grant execute on function public.submit_puzzle_answer(text) to anon;

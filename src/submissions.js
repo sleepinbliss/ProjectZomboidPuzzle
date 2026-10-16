@@ -38,14 +38,13 @@ export async function saveSubmission(answer) {
         throw new Error('Enter exactly 8 letters.');
     }
     const { projectUrl, publishableKey } = getSupabaseConfig();
-    const response = await fetch(`${projectUrl}/rest/v1/submissions`, {
+    const response = await fetch(`${projectUrl}/rest/v1/rpc/submit_puzzle_answer`, {
         method: 'POST',
         headers: {
             apikey: publishableKey,
             'Content-Type': 'application/json',
-            Prefer: 'return=minimal',
         },
-        body: JSON.stringify({ answer }),
+        body: JSON.stringify({ p_answer: answer }),
     });
     if (!response.ok) {
         const error = await response.json().catch(() => null);
@@ -54,4 +53,9 @@ export async function saveSubmission(answer) {
         }
         throw new Error('Could not save your answer. Please try again.');
     }
+    const isCorrect = await response.json();
+    if (typeof isCorrect !== 'boolean') {
+        throw new Error('Could not verify your answer. Please try again.');
+    }
+    return isCorrect;
 }
