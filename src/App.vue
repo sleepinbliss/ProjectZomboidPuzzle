@@ -2,10 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { ChevronLeft, ChevronRight, Send } from "@lucide/vue";
 import AmbientParticles from "./components/AmbientParticles.vue";
-import {
-	getSubmissionAttemptCount,
-	saveSubmission,
-} from "./submissions.js";
+import { getSubmissionAttemptCount, saveSubmission } from "./submissions.js";
 
 const puzzleStartedAt = Date.parse("2026-10-12T21:02:00-06:00");
 const currentTime = ref(Date.now());
@@ -138,8 +135,7 @@ const isSubmitting = ref(false);
 const submissionError = ref("");
 const submissionAttemptCount = ref(null);
 const cooldownTimer = computed(() => {
-	const millisecondsToReset =
-		3600000 - (currentTime.value % 3600000);
+	const millisecondsToReset = 3600000 - (currentTime.value % 3600000);
 	const secondsToReset = Math.ceil(millisecondsToReset / 1000);
 	const minutes = Math.floor(secondsToReset / 60);
 	const seconds = secondsToReset % 60;
@@ -206,10 +202,9 @@ async function submitAnswer() {
 			submissionAttemptCount.value = 20;
 			void refreshSubmissionAttemptCount();
 		}
-		submissionError.value =
-			hourlyLimitReached
-				? error.message
-				: "Could not save your answer. Please try again.";
+		submissionError.value = hourlyLimitReached
+			? error.message
+			: "Could not save your answer. Please try again.";
 	} finally {
 		isSubmitting.value = false;
 	}
@@ -220,6 +215,7 @@ const hints = [
 	"You won't guess the word, it will be obvious when it's found.",
 	"The word is not on this page, and not in a book. But locked in a crate somewhere in the woods.",
 	"TEN",
+	"The heading is more than just a number. Take it one letter at a time; everything counts.",
 ];
 
 function changeHint(direction) {

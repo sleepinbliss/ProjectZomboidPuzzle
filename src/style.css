@@ -708,27 +708,36 @@ h3 {
 	padding: 16px;
 	border: 1px solid var(--card-border);
 	background: var(--card-surface);
+	text-align: left;
 	box-shadow:
 		0 3px 10px rgba(0, 0, 0, 0.18),
 		inset 0 1px 0 rgba(217, 221, 215, 0.045),
 		inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
+.answer-form {
+	width: 100%;
+	margin: 0;
+}
+
 .submit-card .eyebrow {
 	margin-bottom: 10px;
+	padding-left: 2px;
 	color: #d9ddd7;
 	font-size: 7px;
 }
 
 .submit-card h3 {
 	margin-bottom: 7px;
+	padding-left: 2px;
 	color: var(--amber);
 	font-size: 10px;
 }
 
 .submit-card > p:last-of-type {
-	max-width: 185px;
+	max-width: 100%;
 	margin-bottom: 0;
+	padding-left: 2px;
 	color: #b6bbb2;
 	font-family: var(--screen);
 	font-size: 18px;
@@ -742,6 +751,7 @@ h3 {
 
 .answer-controls {
 	display: grid;
+	width: 100%;
 	grid-template-columns: minmax(0, 1fr) 44px;
 	gap: 8px;
 }
@@ -794,9 +804,11 @@ h3 {
 
 .answer-attempts {
 	display: flex;
+	width: 100%;
 	align-items: center;
 	justify-content: space-between;
 	margin-top: 7px;
+	padding-left: 2px;
 	color: #ff6b6b;
 	font-family: var(--terminal);
 	font-size: 10px;
@@ -809,6 +821,7 @@ h3 {
 .answer-feedback {
 	min-height: 2.5em;
 	margin: 8px 0;
+	padding: 0 0 0 2px;
 	color: var(--ink);
 	font-family: var(--terminal);
 	font-size: 13px;
